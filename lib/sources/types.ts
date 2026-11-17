@@ -58,17 +58,28 @@ export function htmlToText(html: string): string {
     .trim();
 }
 
-export async function fetchJson(url: string, init?: RequestInit): Promise<unknown> {
-  const res = await fetch(url, {
-    ...init,
-    headers: { accept: "application/json", "user-agent": "beep-fresher-jobs/0.1 (+assessment project)", ...(init?.headers ?? {}) },
-    signal: AbortSignal.timeout(25_000),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
+export async function fetchJson(url: string, init?: RequestInit, attempt = 0): Promise<unknown> {
   try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error("non-JSON response");
+    const res = await fetch(url, {
+      ...init,
+      headers: { accept: "application/json", "user-agent": "beep-fresher-jobs/0.1 (+assessment project)", ...(init?.headers ?? {}) },
+      signal: AbortSignal.timeout(25_000),
+    });
+    if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) return Promise.reject(new Error(`HTTP ${res.status}`));
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error("non-JSON response");
+    }
+  } catch (e) {
+    const msg = (e as Error).message ?? "";
+    const retryable = /HTTP 5\d\d|HTTP 429|timeout|aborted|fetch failed|ECONNRESET|ETIMEDOUT/i.test(msg) || (e as Error).name === "TimeoutError";
+    if (retryable && attempt < 2) {
+      await new Promise((r) => setTimeout(r, 3_000 * (attempt + 1)));
+      return fetchJson(url, init, attempt + 1);
+    }
+    throw e;
   }
 }

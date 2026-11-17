@@ -160,7 +160,13 @@ export async function ingestAll(opts: IngestOptions & { sourceIds?: number[] } =
     Array.from({ length: conc }, async () => {
       while (i < list.length) {
         const s = list[i++];
-        out.push(await ingestSource(s, opts));
+        try {
+          out.push(await ingestSource(s, opts));
+        } catch (e) {
+          const msg = (e as Error).message;
+          opts.log?.(`[${s.kind}/${s.token}] crashed: ${msg}`);
+          out.push({ runId: -1, sourceId: s.id, status: "error", error: msg, fetched: 0, indiaMatched: 0, inserted: 0, updated: 0, closed: 0, llmTagged: 0 });
+        }
       }
     }),
   );
