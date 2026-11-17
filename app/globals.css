@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* Design tokens from DESIGN.md (Jobright-style): mint accent, black ink, white canvas. */
+:root {
+  --color-primary: #00f0a0;
+  --color-on-primary: #000000;
+  --color-ink: #000000;
+  --color-on-dark: #ffffff;
+  --color-canvas: #ffffff;
+  --color-canvas-mint: #ecffe0;
+  --color-muted: #86909c;
+  --color-hairline: #e5e7eb;
+  --color-surface-soft: #f2f4f5;
+  --color-link: #1d4ed8;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-pill: 36px;
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-on-primary: var(--color-on-primary);
+  --color-ink: var(--color-ink);
+  --color-on-dark: var(--color-on-dark);
+  --color-canvas: var(--color-canvas);
+  --color-canvas-mint: var(--color-canvas-mint);
+  --color-muted: var(--color-muted);
+  --color-hairline: var(--color-hairline);
+  --color-surface-soft: var(--color-surface-soft);
+  --color-link: var(--color-link);
+  --font-sans: var(--font-inter), Inter, system-ui, sans-serif;
+  --font-display: var(--font-titillium), "Titillium Web", "Arial Narrow", system-ui, sans-serif;
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+  --shadow-soft: var(--shadow-soft);
+}
+
+html {
+  color-scheme: light;
+}
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Reusable primitives */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-xl)] bg-ink px-5 py-2.5 text-sm font-semibold text-on-dark transition hover:opacity-90 disabled:opacity-50;
+}
+.btn-green {
+  @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-ink bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition hover:brightness-95 disabled:opacity-50;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-hairline bg-canvas px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-soft disabled:opacity-50;
+}
+.chip {
+  @apply inline-flex items-center rounded-[8px] bg-surface-soft px-2.5 py-1 text-xs font-medium text-ink;
+}
+.chip-mint {
+  @apply inline-flex items-center rounded-[8px] bg-canvas-mint px-2.5 py-1 text-xs font-semibold text-ink;
+}
+.card {
+  @apply rounded-[var(--radius-md)] border border-hairline bg-canvas;
+}
+.input {
+  @apply w-full rounded-[var(--radius-sm)] border border-hairline bg-canvas px-3 py-2 text-sm text-ink outline-none placeholder:text-muted focus:border-ink;
+}
+.select {
+  @apply rounded-[var(--radius-sm)] border border-hairline bg-canvas px-3 py-2 text-sm font-medium text-ink outline-none focus:border-ink;
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
