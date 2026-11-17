@@ -29,13 +29,34 @@ Mapping: Bangalore -> bengaluru. Delhi, New Delhi, Gurgaon, Gurugram, Noida, Far
 ## Output
 Return one entry per input post, same id, in the same order. confidence in [0,1]. reason: <= 20 words quoting the deciding signal (e.g. "0-2 years in requirements").`;
 
+const REQ_RE =
+  /[^.\n]{0,160}\b(\d+\s*\+?\s*(?:-|–|to)?\s*\d*\s*\+?\s*(?:years?|yrs)\b|years? of experience|experience required|fresher|graduat|entry[- ]level|new grad|must have|minimum qualifications?|requirements?:|qualifications?:)[^.\n]{0,160}/gi;
+
+/** Sentences that state experience/qualification requirements, wherever they sit in the description. */
+export function requirementSnippets(description: string, max = 900): string {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  let total = 0;
+  for (const m of description.matchAll(REQ_RE)) {
+    const t = m[0].replace(/\s+/g, " ").trim();
+    if (t.length < 12 || seen.has(t)) continue;
+    seen.add(t);
+    if (total + t.length > max) break;
+    out.push(t);
+    total += t.length;
+  }
+  return out.join(" • ");
+}
+
 export function userPrompt(posts: { id: number; title: string; company: string; locationRaw: string; descriptionText: string }[]) {
   const items = posts.map((p) => ({
     id: p.id,
     title: p.title,
     company: p.company,
     location: p.locationRaw,
-    description: p.descriptionText.slice(0, 2500),
+    description: p.descriptionText.slice(0, 2200),
+    // Requirements often sit after the 2,200-char window (company boilerplate first). Surface them explicitly.
+    requirement_lines: requirementSnippets(p.descriptionText),
   }));
-  return `Classify these ${items.length} posts:\n${JSON.stringify(items)}`;
+  return `Classify these ${items.length} posts. "requirement_lines" are sentences extracted from the full description that mention experience or qualifications; trust them over the truncated description when they conflict:\n${JSON.stringify(items)}`;
 }
