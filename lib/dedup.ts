@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { eq, isNull, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db/client";
 
 const { jobs, sources } = schema;
@@ -34,6 +34,8 @@ export async function runDedup(): Promise<{ groups: number; duplicates: number }
       city: jobs.city,
       locationRaw: jobs.locationRaw,
       applyUrl: jobs.applyUrl,
+      dedupKey: jobs.dedupKey,
+      canonicalJobId: jobs.canonicalJobId,
       firstSeenAt: jobs.firstSeenAt,
       kind: sources.kind,
     })
@@ -73,6 +75,7 @@ export async function runDedup(): Promise<{ groups: number; duplicates: number }
     groups.get(root)!.push(r);
   }
   let duplicates = 0;
+  const changes: { id: number; key: string; canonical: number | null }[] = [];
   for (const members of groups.values()) {
     members.sort((a, b) => {
       const ka = a.kind === "smartrecruiters" ? 1 : 0; // direct ATS boards tie; aggregators (none yet) would rank later
@@ -85,11 +88,21 @@ export async function runDedup(): Promise<{ groups: number; duplicates: number }
     for (const m of members) {
       const isCanon = m.id === canonical.id;
       if (!isCanon) duplicates++;
-      await db
-        .update(jobs)
-        .set({ dedupKey: keyOf.get(m.id), canonicalJobId: isCanon ? null : canonical.id })
-        .where(and(eq(jobs.id, m.id), sql`(dedup_key is distinct from ${keyOf.get(m.id)} or canonical_job_id is distinct from ${isCanon ? null : canonical.id})`));
+      const key = keyOf.get(m.id)!;
+      const canon = isCanon ? null : canonical.id;
+      if (m.dedupKey !== key || m.canonicalJobId !== canon) changes.push({ id: m.id, key, canonical: canon });
     }
+  }
+  // One UPDATE ... FROM (VALUES ...) per 500 changed rows instead of one round-trip per row.
+  for (let i = 0; i < changes.length; i += 500) {
+    const chunk = changes.slice(i, i + 500);
+    const values = sql.join(
+      chunk.map((c) => sql`(${c.id}::int, ${c.key}::text, ${c.canonical}::int)`),
+      sql`, `,
+    );
+    await db.execute(
+      sql`update jobs as j set dedup_key = v.key, canonical_job_id = v.canonical from (values ${values}) as v(id, key, canonical) where j.id = v.id`,
+    );
   }
   return { groups: groups.size, duplicates };
 }
