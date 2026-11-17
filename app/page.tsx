@@ -44,10 +44,10 @@ export default async function Page(props: PageProps<"/">) {
         </div>
       </div>
 
-      <main className="mx-auto grid w-full max-w-[1400px] flex-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:items-start">
+      <main className="mx-auto grid w-full max-w-[1400px] flex-1 grid-cols-[minmax(0,1fr)] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:items-start">
         <section
           aria-label="Job list"
-          className={`${showDetailFirst ? "order-2 lg:order-none" : "order-1"} lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1`}
+          className={`${showDetailFirst ? "order-2 lg:order-none" : "order-1"} min-w-0 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1`}
         >
           {list.total === 0 ? (
             <EmptyList filtered={hasActiveFilters(filters)} />

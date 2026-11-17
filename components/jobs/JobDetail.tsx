@@ -40,7 +40,7 @@ export function JobDetail({ job, now, standalone = false }: Props) {
           )}
         </div>
 
-        <h1 className="display mt-4 text-2xl leading-tight sm:text-3xl">{job.title}</h1>
+        <h1 className="display mt-4 break-words text-2xl leading-tight sm:text-3xl">{job.title}</h1>
 
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
           {chips.map((c) => (

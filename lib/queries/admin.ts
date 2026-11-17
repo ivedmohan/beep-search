@@ -398,6 +398,9 @@ export interface AdminStats {
     postsTagged: number;
     costPer1k: number | null;
     avgTokensPerPost: number | null;
+    costPerCall: number | null;
+    costPerPost: number | null;
+    costPer50: number | null;
     cacheHitRate: number | null;
     inputTokens: number;
     outputTokens: number;
@@ -513,6 +516,9 @@ export async function getAdminStats(): Promise<AdminStats> {
     llm: {
       ...l,
       costPer1k: l.postsTagged > 0 ? (l.totalCostUsd / l.postsTagged) * 1000 : null,
+      costPerCall: l.calls > 0 ? l.totalCostUsd / l.calls : null,
+      costPerPost: l.postsTagged > 0 ? l.totalCostUsd / l.postsTagged : null,
+      costPer50: l.postsTagged > 0 ? (l.totalCostUsd / l.postsTagged) * 50 : null,
       avgTokensPerPost: l.postsTagged > 0 ? totalTokens / l.postsTagged : null,
       cacheHitRate: promptTokens > 0 ? l.cacheReadTokens / promptTokens : null,
     },

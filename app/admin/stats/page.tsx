@@ -80,6 +80,9 @@ export default async function AdminStatsPage() {
           <Tile label="Total cost" value={fmtUsd(s.llm.totalCostUsd, 4)} sub={`${fmtInt(s.llm.calls)} calls · ${fmtInt(s.llm.failedCalls)} failed`} />
           <Tile label="Posts tagged" value={fmtInt(s.llm.postsTagged)} sub="sum(posts_count) over ok calls" />
           <Tile label="Cost / 1,000 posts" value={s.llm.costPer1k == null ? "—" : fmtUsd(s.llm.costPer1k, 3)} sub="sum(cost) / sum(posts) × 1000" />
+          <Tile label="Avg cost / call" value={s.llm.costPerCall == null ? "—" : fmtUsd(s.llm.costPerCall, 5)} sub="total cost / calls (10 posts per call)" />
+          <Tile label="Cost / post" value={s.llm.costPerPost == null ? "—" : fmtUsd(s.llm.costPerPost, 5)} sub="total cost / posts tagged" />
+          <Tile label="Cost for 50 posts" value={s.llm.costPer50 == null ? "—" : fmtUsd(s.llm.costPer50, 4)} sub="cost / post × 50 (the review sample size)" />
           <Tile label="Avg tokens / post" value={s.llm.avgTokensPerPost == null ? "—" : fmtInt(Math.round(s.llm.avgTokensPerPost))} sub="input + output + cache" />
           <Tile label="Cache hit rate" value={fmtPct(s.llm.cacheHitRate, 1)} sub="cache_read / all prompt tokens" />
           <Tile
