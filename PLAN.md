@@ -156,6 +156,12 @@ Note: the email says "Friday, 20 November" but 20 Nov 2026 is a Thursday. Treat 
 6. ATS boards are ~1–4% fresher posts; don't expect them to carry the 200 target.
 7. Never close jobs for a source whose fetch failed this run.
 8. Haiku 5.5: no server-side refusal fallback; handle `stop_reason === 'refusal'` by marking the batch for retry, not crashing.
+9. Greenhouse `content` is entity-encoded HTML: decode entities *before* stripping tags or tags survive.
+10. Neon from India: ~200 ms per round-trip. Never loop single-row writes; chunk inserts and use `UPDATE … FROM (VALUES …)`.
+11. Home-router DNS would not resolve the new Neon host for >10 min; public resolvers did. Local .env uses IP + `options=endpoint%3D<ep>`; keep hostname form for Vercel/GitHub.
+12. Lever's postings API can be down for everyone while status.lever.co says operational (17 Nov 2026). Soft-close-on-success is what saved the data.
+13. Anything exported from a `"use client"` file is bundled for the browser, including server helpers; keep shared pure helpers in their own module.
+14. Next 16: `proxy.ts` not `middleware.ts`; `searchParams`/`params` are Promises; `cacheComponents` defaults on in new apps.
 
 ## Submission checklist
 
