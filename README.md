@@ -1,5 +1,7 @@
 # Beep Job Hub — fresher jobs & internships in India
 
+Live: https://beep-search.vercel.app · Admin: https://beep-search.vercel.app/admin
+
 Live tool built for Beep's Gen AI & Engineering assessment. It collects fresher/internship posts in India from
 public ATS job-board APIs (Greenhouse, Lever, Ashby, SmartRecruiters), de-duplicates them, tags each post by
 role and city with Claude Haiku, and shows them on a searchable Beep-style page that refreshes itself every 6 hours.

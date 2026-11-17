@@ -1,6 +1,6 @@
 # Submission notes — Beep Job Hub (fresher jobs & internships in India)
 
-Live tool: _(Vercel URL)_ · Repo: https://github.com/ivedmohan/beep-search · Admin: `/admin`
+Live tool: https://beep-search.vercel.app · Repo: https://github.com/ivedmohan/beep-search · Admin: `/admin`
 
 All numbers below are copied from the database (queries at the bottom) for the first full run on **17 Nov 2026, 10:50–11:00 UTC**.
 They move every 6 hours as the cron runs; the Stats page in admin shows the live values.
