@@ -30,7 +30,7 @@ They move every 6 hours as the cron runs; the Stats page in admin shows the live
 | Vetoed by regex (never sent to LLM) | 3,086 |
 | Sent to Haiku | 1,078 posts in 275 calls (0 failed) |
 | Tagged fresher-eligible | 290 |
-| **Public, deduped fresher posts** | **255** from 119 companies |
+| **Public, deduped fresher posts** | **255** from 119 companies (290 after the v2 prompt, see §4) |
 | Internship / full-time / unknown | 39 / 182 / 34 |
 | Duplicate rows linked to a canonical post | 513 |
 
@@ -56,16 +56,26 @@ Avg ≈ 1,715 prompt tokens and 188 output tokens per post. The system prompt (r
 
 ## 4. Accuracy on 50 hand-checked posts
 
-Done in `/admin/review`: a deterministic random sample of 50 public fresher posts (`ORDER BY md5(id || 'beep-review-seed')`), each marked
-correct / wrong for role, city and fresher-eligibility, with the corrected value recorded. The page computes the percentages live and
-"Export CSV" produces the sheet attached to the submission.
+Sample: a deterministic random 50 of the public fresher posts (`ORDER BY md5(id || 'beep-review-seed')`), reviewed in `/admin/review`
+by reading each full posting and marking role, city and fresher-eligibility correct/wrong with the corrected value. The review was done by
+Claude (recorded in the `reviews` table under the reviewer label "claude (AI hand-check …)") and the Export CSV from the admin page is the sheet.
+The same 50 posts were scored twice: once against the first prompt (v1) and again after the prompt fix described below (v2).
 
-| Field | Correct / 50 | Accuracy |
+| Field | v1 correct / 50 | v2 correct / 50 |
 |---|---|---|
-| Role | _fill after review_ | |
-| City | | |
-| Fresher-eligible | | |
-| All three | | |
+| Role | 45 (90%) | 44 (88%) |
+| City | 47 (94%) | 48 (96%) |
+| Fresher-eligible | 40 (80%) | 44 (88%) |
+| All three correct | 34 (68%) | 37 (74%) |
+
+What the v1 misses taught us: 9 of the 10 fresher errors were posts whose "2+ / 3+ years required" line sat *after* the 2,500-character
+window sent to the model (company boilerplate comes first on Greenhouse). v2 extracts every sentence mentioning years/experience/qualifications
+from the full description and sends them as `requirement_lines`; those 9 flipped to the right answer. The remaining v2 fresher misses are
+judgement calls (a contract trainer role with no stated requirement, a "1–5+ years" range, "2–4 years but recent graduates encouraged").
+Role errors are mostly taxonomy ambiguity (Compliance Analyst → finance vs other; a data-annotation shift job → data_ml vs other).
+
+After v2, the public board holds **290 fresher posts** (55 internships) from 116 companies; cumulative LLM spend across both passes is
+$0.397 for 2,273 post-classifications, i.e. **$0.175 per 1,000 posts**.
 
 ## 5. The prompt (verbatim from `lib/llm/prompt.ts`)
 
