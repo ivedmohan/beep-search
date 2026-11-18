@@ -74,8 +74,12 @@ from the full description and sends them as `requirement_lines`; those 9 flipped
 judgement calls (a contract trainer role with no stated requirement, a "1–5+ years" range, "2–4 years but recent graduates encouraged").
 Role errors are mostly taxonomy ambiguity (Compliance Analyst → finance vs other; a data-annotation shift job → data_ml vs other).
 
-After v2, the public board holds **290 fresher posts** (55 internships) from 116 companies; cumulative LLM spend across both passes is
+After v2, the public board held **290 fresher posts** (55 internships) from 116 companies; cumulative LLM spend across both passes was
 $0.397 for 2,273 post-classifications, i.e. **$0.175 per 1,000 posts**.
+
+Live snapshot after the first unattended cron run (18 Nov 2026, 05:23 UTC, all 366 boards fetched OK once Lever's API recovered):
+**327 public fresher posts** (54 internships) from 117 companies; 428 Haiku calls, $0.425 for 2,438 classifications = **$0.174 per 1,000**.
+`/admin/stats` shows these numbers live.
 
 ## 5. The prompt (verbatim from `lib/llm/prompt.ts`)
 
