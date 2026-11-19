@@ -5,6 +5,8 @@ Live tool: https://beep-search.vercel.app · Repo: https://github.com/ivedmohan/
 All numbers below are copied from the database (queries at the bottom) for the first full run on **17 Nov 2026, 10:50–11:00 UTC**.
 They move every 6 hours as the cron runs; the Stats page in admin shows the live values.
 
+**Working doc (sheet):** `docs/beep-working-doc.xlsx` — all public posts, the 50 reviewed posts with v1/v2 tags, every LLM call with cost, sources, the verbatim prompt, AI tools used, and every prompt given to Claude Code (`docs/CHAT_PROMPTS.md`).
+
 ## 1. What it does
 1. **Collect** — every 6 hours a GitHub Actions job (`.github/workflows/ingest.yml`) fetches 366 public ATS job boards
    (Greenhouse 240, Ashby 101, Lever 22, SmartRecruiters 3) through their documented public JSON endpoints.

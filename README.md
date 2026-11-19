@@ -29,3 +29,5 @@ dedup across open posts on normalised company|title|city and exact apply URL (`l
 
 ## Scheduler
 `.github/workflows/ingest.yml` runs `scripts/ingest.ts` every 6 hours (secrets: `DATABASE_URL`, `ANTHROPIC_API_KEY`).
+
+Submission: `docs/SUBMISSION.md` (write-up, numbers, SQL) · `docs/beep-working-doc.xlsx` (data, prompts, AI tools) · `docs/CHAT_PROMPTS.md`.
